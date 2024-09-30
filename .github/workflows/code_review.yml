@@ -16,7 +16,7 @@ jobs:
     steps:
       # 检出仓库代码到 GitHub Action runner 中
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # 设置所需环境变量，例如 API_KEY_SECRET (可以在 GitHub Secrets 中配置)
       - name: Set environment variables
@@ -31,7 +31,7 @@ jobs:
       # 将生成的 Markdown 文件保存为工作流的输出
       - name: Upload Markdown Review Results
         if: success()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: code-review-result
           path: codeReviewLog/codeReviewResult_*.md  # 上传所有生成的 Markdown 文件
