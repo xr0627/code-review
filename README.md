@@ -17,7 +17,7 @@
    sudo apt-get install curl jq   # 对于 Ubuntu 或 Debian 系统
    ```
 
-3. 设置 API 密钥作为环境变量：[访问智谱]{https://open.bigmodel.cn/usercenter/apikeys}
+3. 设置 API 密钥作为环境变量：[访问智谱](https://open.bigmodel.cn/usercenter/apikeys)
 
    ```bash
    export API_KEY_SECRET="your_api_key_here"
