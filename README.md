@@ -7,8 +7,8 @@
 1. 克隆仓库：
 
    ```bash
-   git clone https://github.com/your-username/your-repository.git
-   cd your-repository
+   git clone https://github.com/xr0627/code-review.git
+   cd code-review
    ```
 
 2. 需要安装的依赖工具（例如 curl 和 jq）：
