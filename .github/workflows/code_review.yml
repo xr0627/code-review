@@ -27,3 +27,11 @@ jobs:
         run: |
           chmod +x scripts/code_review.sh  # 确保脚本有执行权限
           ./scripts/code_review.sh          # 运行代码审查脚本
+
+      # 将生成的 Markdown 文件保存为工作流的输出
+      - name: Upload Markdown Review Results
+        if: success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-review-result
+          path: codeReviewLog/codeReviewResult_*.md  # 上传所有生成的 Markdown 文件
