@@ -1,0 +1,29 @@
+name: Code Review Automation
+
+# 定义触发条件：代码 push 到 main 分支或者提交 pull request 时触发
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  review:
+    runs-on: ubuntu-latest  # 运行环境，这里使用 Ubuntu 最新版本
+
+    steps:
+      # 检出仓库代码到 GitHub Action runner 中
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # 设置所需环境变量，例如 API_KEY_SECRET (可以在 GitHub Secrets 中配置)
+      - name: Set environment variables
+        run: echo "API_KEY_SECRET=${{ secrets.API_KEY_SECRET }}" >> $GITHUB_ENV
+
+      # 运行 Shell 脚本，执行代码差异获取和 API 调用
+      - name: Run Code Review Script
+        run: |
+          chmod +x scripts/code_review.sh  # 确保脚本有执行权限
+          ./scripts/code_review.sh          # 运行代码审查脚本
