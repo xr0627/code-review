@@ -84,6 +84,10 @@ if [ "$response" -eq 200 ]; then
 
   echo "Processed data saved to $processedFilename"
 
+  # 打印生成的Markdown文件内容到控制台
+  echo "Generated Markdown file content:"
+  cat "$processedFilename"
+
   # 检查处理后的文件是否有效
   if [ -s "$processedFilename" ] && [ "$(cat "$processedFilename")" = 'null' ]; then
     echo "本次没有评审结果"
