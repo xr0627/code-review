@@ -1,6 +1,5 @@
 name: Code Review Automation
 
-# 定义触发条件：代码 push 到 main 分支或者提交 pull request 时触发
 on:
   push:
     branches:
@@ -11,27 +10,31 @@ on:
 
 jobs:
   review:
-    runs-on: ubuntu-latest  # 运行环境，这里使用 Ubuntu 最新版本
+    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 版本
 
     steps:
-      # 检出仓库代码到 GitHub Action runner 中
+      # 第一步，检出代码
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 设置所需环境变量，例如 API_KEY_SECRET (可以在 GitHub Secrets 中配置)
+      # 设置 API 密钥环境变量
       - name: Set environment variables
         run: echo "API_KEY_SECRET=${{ secrets.API_KEY_SECRET }}" >> $GITHUB_ENV
 
-      # 运行 Shell 脚本，执行代码差异获取和 API 调用
+      # 自动暂存所有改动，这样 git diff --cached 可以检测到更改
+      - name: Stage all changes
+        run: git add .
+
+      # 运行代码审查脚本
       - name: Run Code Review Script
         run: |
           chmod +x scripts/code_review.sh  # 确保脚本有执行权限
           ./scripts/code_review.sh          # 运行代码审查脚本
 
-      # 将生成的 Markdown 文件保存为工作流的输出
+      # 上传生成的 Markdown 结果
       - name: Upload Markdown Review Results
         if: success()
         uses: actions/upload-artifact@v3
         with:
           name: code-review-result
-          path: codeReviewLog/codeReviewResult_*.md  # 上传所有生成的 Markdown 文件
+          path: codeReviewLog/codeReviewResult_*.md
