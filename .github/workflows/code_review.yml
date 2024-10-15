@@ -27,9 +27,11 @@ jobs:
         run: |
           # 检查是否有提交历史
           if git rev-parse --quiet --verify HEAD; then
-            changes=$(git diff HEAD~1 HEAD)  # 有历史提交的情况
+            # 获取当前提交与上一个提交的差异
+            changes=$(git diff HEAD~1 HEAD)
           else
-            changes=$(git diff HEAD)  # 第一次提交的情况
+            # 获取当前工作目录的差异
+            changes=$(git diff HEAD)
           fi
 
           commitHash=$(git rev-parse HEAD)
@@ -42,15 +44,15 @@ jobs:
           echo "$changes"
 
           # 将输出传递给后续步骤
-          echo "::set-output name=commit_hash::$commitHash"
-          echo "::set-output name=author::$author"
-          echo "::set-output name=changes::$changes"
+          echo "commit_hash=$commitHash" >> $GITHUB_ENV
+          echo "author=$author" >> $GITHUB_ENV
+          echo "changes=$changes" >> $GITHUB_ENV
 
       # 运行代码审查脚本
       - name: Run Code Review Script
         run: |
           chmod +x scripts/code_review.sh  # 确保脚本有执行权限
-          ./scripts/code_review.sh "${{ steps.get_changes.outputs.changes }}" # 传递代码差异作为参数
+          ./scripts/code_review.sh "${{ env.changes }}" # 传递代码差异作为参数
 
       # 上传生成的 Markdown 结果
       - name: Upload Markdown Review Results
