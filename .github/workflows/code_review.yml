@@ -26,16 +26,16 @@ jobs:
         id: get_changes
         run: |
           # 检查是否有提交历史
-          if git rev-parse --quiet --verify HEAD; then
+          commitHash=$(git rev-parse HEAD)
+          author=$(git log -1 --pretty=format:'%an <%ae>')
+
+          if git rev-parse --quiet --verify HEAD~1; then
             # 获取当前提交与上一个提交的差异
             changes=$(git diff HEAD~1 HEAD)
           else
             # 如果没有历史提交，使用当前工作目录的差异
             changes=$(git diff)
           fi
-
-          commitHash=$(git rev-parse HEAD)
-          author=$(git log -1 --pretty=format:'%an <%ae>')
 
           # 输出结果
           echo "Commit: $commitHash"
@@ -61,4 +61,3 @@ jobs:
         with:
           name: code-review-result
           path: codeReviewLog/codeReviewResult_*.md
-
