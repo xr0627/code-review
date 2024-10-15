@@ -10,10 +10,10 @@ on:
 
 jobs:
   review:
-    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 版本
+    runs-on: ubuntu-latest
 
     steps:
-      # 第一步，检出代码
+      # 检出代码
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -21,15 +21,31 @@ jobs:
       - name: Set environment variables
         run: echo "API_KEY_SECRET=${{ secrets.API_KEY_SECRET }}" >> $GITHUB_ENV
 
-      # 自动暂存所有改动，这样 git diff --cached 可以检测到更改
-      - name: Stage all changes
-        run: git add .
+      # 获取代码差异和提交信息
+      - name: Get changes and commit info
+        id: get_changes
+        run: |
+          # 获取当前提交的差异
+          changes=$(git diff HEAD~1 HEAD)
+          commitHash=$(git rev-parse HEAD)
+          author=$(git log -1 --pretty=format:'%an <%ae>')
+
+          # 输出结果
+          echo "Commit: $commitHash"
+          echo "Author: $author"
+          echo "代码差异："
+          echo "$changes"
+
+          # 将输出传递给后续步骤
+          echo "::set-output name=commit_hash::$commitHash"
+          echo "::set-output name=author::$author"
+          echo "::set-output name=changes::$changes"
 
       # 运行代码审查脚本
       - name: Run Code Review Script
         run: |
           chmod +x scripts/code_review.sh  # 确保脚本有执行权限
-          ./scripts/code_review.sh          # 运行代码审查脚本
+          ./scripts/code_review.sh "${{ steps.get_changes.outputs.changes }}" # 传递代码差异作为参数
 
       # 上传生成的 Markdown 结果
       - name: Upload Markdown Review Results
