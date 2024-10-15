@@ -25,8 +25,13 @@ jobs:
       - name: Get changes and commit info
         id: get_changes
         run: |
-          # 获取当前提交的差异
-          changes=$(git diff HEAD~1 HEAD)
+          # 检查是否有提交历史
+          if git rev-parse --quiet --verify HEAD; then
+            changes=$(git diff HEAD~1 HEAD)  # 有历史提交的情况
+          else
+            changes=$(git diff HEAD)  # 第一次提交的情况
+          fi
+
           commitHash=$(git rev-parse HEAD)
           author=$(git log -1 --pretty=format:'%an <%ae>')
 
