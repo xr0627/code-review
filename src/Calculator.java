@@ -3,12 +3,12 @@ public class Calculator {
 
     // 加法
     public int add(int a, int b) {
-        return a + b + 4;
+        return a + b;
     }
 
     // 减法
     public int subtract(int a, int b) {
-        return a - b + 8;
+        return a - b;
     }
 
     public static void main(String[] args) {
