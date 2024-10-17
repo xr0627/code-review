@@ -4,10 +4,10 @@ name: Code Review Automation
 on:
   push:
     branches:
-      - 'main'  # 对所有分支的 push 触发，你可以根据需要限定到 'main' 分支
+      - '**'  # 对所有分支的 push 触发，你可以根据需要限定到 'main' 分支
   pull_request:
     branches:
-      - 'main'  # 对所有分支的 PR 触发，测试时先对所有分支，验证后再指定 'main'
+      - '**'  # 对所有分支的 PR 触发
 
 jobs:
   review:
@@ -24,8 +24,7 @@ jobs:
 
       # 设置 API_KEY_SECRET 环境变量
       - name: Set environment variables
-        env:
-          API_KEY_SECRET: ${{ secrets.API_KEY_SECRET }}
+        run: echo "API_KEY_SECRET=${{ secrets.API_KEY_SECRET }}" >> $GITHUB_ENV
 
       # 暂存所有更改
       - name: Stage changes
@@ -57,7 +56,6 @@ jobs:
           else
             echo "Review result file not found!"
             exit 1
-          fi
 
       # 上传生成的 Markdown 文件
       - name: Upload Markdown Review Results
