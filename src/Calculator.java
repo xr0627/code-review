@@ -3,7 +3,7 @@ public class Calculator {
 
     // 加法 - 支持整数和浮点数
     public double add(double a, double b) {
-        return a + b;
+        return a + b + 4;
     }
 
     // 减法 - 支持整数和浮点数
@@ -13,7 +13,7 @@ public class Calculator {
 
     // 乘法 - 支持整数和浮点数
     public double multiply(double a, double b) {
-        return a * b;
+        return a * b / 2;
     }
 
     // 除法 - 支持浮点数并处理除以零的情况
