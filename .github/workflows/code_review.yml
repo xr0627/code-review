@@ -20,6 +20,10 @@ jobs:
         with:
           fetch-depth: 0  # 拉取完整的提交历史记录，以便获取到所有变更
 
+      # 拉取最新的 origin/main 确保可以比较变更
+      - name: Fetch all branches
+        run: git fetch --all
+
       # 设置所需环境变量，例如 API_KEY_SECRET (可以在 GitHub Secrets 中配置)
       - name: Set environment variables
         run: echo "API_KEY_SECRET=${{ secrets.API_KEY_SECRET }}" >> $GITHUB_ENV
@@ -32,7 +36,12 @@ jobs:
 
       # 列出生成的文件目录，调试文件生成是否正常
       - name: List codeReviewLog directory contents
-        run: ls -la codeReviewLog
+        run: |
+          if [ -d "codeReviewLog" ]; then
+            ls -la codeReviewLog
+          else
+            echo "Directory codeReviewLog does not exist."
+          fi
 
       # 检查生成的 Markdown 文件是否存在，使用 find 代替通配符
       - name: Check if Markdown file exists
