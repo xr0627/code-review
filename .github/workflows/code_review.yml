@@ -17,35 +17,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 设置 API 密钥环境变量
+      # 设置环境变量
       - name: Set environment variables
-        env:
-          API_KEY_SECRET: ${{ secrets.API_KEY_SECRET }}
+        run: echo "API_KEY_SECRET=${{ secrets.API_KEY_SECRET }}" >> $GITHUB_ENV
 
-      # 获取代码差异和提交信息
-      - name: Get changes and commit info
-        id: get_changes
-        run: |
-          commitHash=$(git rev-parse HEAD)
-          author=$(git log -1 --pretty=format:'%an <%ae>')
+      # 暂存所有更改
+      - name: Stage changes
+        run: git add .
 
-          if git rev-parse --quiet --verify HEAD~1; then
-            changes=$(git diff HEAD~1 HEAD)
-          else
-            changes=$(git diff)
-          fi
-
-          echo "commit_hash=$commitHash" >> $GITHUB_ENV
-          echo "author=$author" >> $GITHUB_ENV
-          echo "changes=$changes" >> $GITHUB_ENV
-
-      # 运行代码审查脚本
+      # 运行 Shell 脚本，执行代码差异获取和 API 调用
       - name: Run Code Review Script
         run: |
-          chmod +x scripts/code_review.sh  # 确保脚本有执行权限
-          ./scripts/code_review.sh "${{ env.changes }}"  # 传递代码差异作为参数
+          chmod +x scripts/code_review.sh
+          ./scripts/code_review.sh
 
-      # 上传生成的 Markdown 结果
+      # 上传生成的 Markdown 文件
       - name: Upload Markdown Review Results
         if: success()
         uses: actions/upload-artifact@v3
