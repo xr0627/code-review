@@ -17,7 +17,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 设置环境变量
+      # 安装 jq 以便处理 JSON 响应
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      # 设置 API_KEY_SECRET 环境变量
       - name: Set environment variables
         run: echo "API_KEY_SECRET=${{ secrets.API_KEY_SECRET }}" >> $GITHUB_ENV
 
@@ -25,11 +29,13 @@ jobs:
       - name: Stage changes
         run: git add .
 
-      # 运行 Shell 脚本，执行代码差异获取和 API 调用
+      # 确保脚本有执行权限
+      - name: Make script executable
+        run: chmod +x scripts/code_review.sh
+
+      # 运行代码审查脚本
       - name: Run Code Review Script
-        run: |
-          chmod +x scripts/code_review.sh
-          ./scripts/code_review.sh
+        run: ./scripts/code_review.sh
 
       # 上传生成的 Markdown 文件
       - name: Upload Markdown Review Results
