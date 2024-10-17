@@ -1,38 +1,32 @@
 name: Code Review Automation
 
-# 触发条件：push 或 pull request 事件触发
 on:
   push:
     branches:
-      - '**'  # 对所有分支的 push 触发，你可以根据需要限定到 'main' 分支
+      - '**'
   pull_request:
     branches:
-      - '**'  # 对所有分支的 PR 触发
+      - '**'
 
 jobs:
   review:
     runs-on: ubuntu-latest
 
     steps:
-      # 检出代码
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 2 
 
-      # 安装 jq 以处理 JSON
       - name: Install jq
         run: sudo apt-get install -y jq
 
-      # 设置 API_KEY_SECRET 环境变量
       - name: Set environment variables
         run: echo "API_KEY_SECRET=${{ secrets.API_KEY_SECRET }}" >> $GITHUB_ENV
 
-      # 暂存所有更改
       - name: Stage changes
         run: git add .
 
-      # 打印调试信息，确保正确获取最新提交
       - name: Print commit info
         run: |
           echo "Latest commit hash:"
@@ -42,15 +36,17 @@ jobs:
           echo "Git changes:"
           git diff HEAD~1 HEAD
 
-      # 确保脚本有执行权限
       - name: Ensure script is executable
         run: chmod +x ./scripts/code_review.sh
 
-      # 运行代码审查脚本
       - name: Run Code Review Script
         run: ./scripts/code_review.sh
 
-      # 检查生成的文件是否存在
+      - name: List codeReviewLog directory
+        run: |
+          echo "Listing files in codeReviewLog directory:"
+          ls -la codeReviewLog
+
       - name: Check review result file
         run: |
           if [ -f "codeReviewLog/codeReviewResult_*.md" ]; then
@@ -60,7 +56,6 @@ jobs:
             exit 1
           fi
 
-      # 上传生成的 Markdown 文件
       - name: Upload Markdown Review Results
         if: success()
         uses: actions/upload-artifact@v3
