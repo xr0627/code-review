@@ -22,18 +22,29 @@ if [ ! -d "$directory" ]; then
   mkdir -p "$directory"
 fi
 
+# 获取当前是否在 CI/CD 环境中运行
+ci=${CI:-false}
+
+# 在 GitHub Actions 中尝试拉取最新的主分支以获得变化
+git fetch origin main
+
 if [ "$ci" = "true" ]; then
-  # 如果在 CI/CD 环境中，比较 HEAD 与 origin/main 之间的变化
-  changes=$(git diff origin/main)
+  # 在 GitHub Actions 环境中，使用 `git diff HEAD~1` 来获取上一个提交与当前提交之间的变更
+  changes=$(git diff HEAD~1)
 else
-  # 如果在本地环境中，获取暂存区的代码差异和提交信息
+  # 在本地环境中，获取暂存区的代码差异和提交信息
   changes=$(git diff --cached)
 fi
 
+# 确保有代码差异可用于审查
 if [ -z "$changes" ]; then
   echo "No changes found in the current commit."
   exit 0
 fi
+
+# 获取提交信息
+commitHash=$(git rev-parse HEAD)
+author=$(git log -1 --pretty=format:'%an <%ae>')
 
 # 获取提交信息
 commitHash=$(git rev-parse HEAD)
