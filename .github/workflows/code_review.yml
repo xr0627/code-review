@@ -58,6 +58,7 @@ jobs:
           else
             echo "Review result file not found!"
             exit 1
+          fi
 
       # 上传生成的 Markdown 文件
       - name: Upload Markdown Review Results
