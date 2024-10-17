@@ -17,6 +17,8 @@ jobs:
       # 检出代码
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 2 
 
       # 安装 jq 以处理 JSON
       - name: Install jq
