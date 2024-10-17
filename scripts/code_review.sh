@@ -22,15 +22,24 @@ if [ ! -d "$directory" ]; then
   mkdir -p "$directory"
 fi
 
-# 获取暂存区的代码差异和提交信息
-changes=$(git diff --cached)
-commitHash=$(git rev-parse HEAD)
-author=$(git log -1 --pretty=format:'%an <%ae>')
+if [ "$ci" = "true" ]; then
+  # 如果在 CI/CD 环境中，比较 HEAD 与 origin/main 之间的变化
+  changes=$(git diff origin/main)
+else
+  # 如果在本地环境中，获取暂存区的代码差异和提交信息
+  changes=$(git diff --cached)
+fi
 
 if [ -z "$changes" ]; then
   echo "No changes found in the current commit."
   exit 0
 fi
+
+# 获取提交信息
+commitHash=$(git rev-parse HEAD)
+author=$(git log -1 --pretty=format:'%an <%ae>')
+
+
 
 # 打印提交信息和代码差异
 echo "Commit: $commitHash"
