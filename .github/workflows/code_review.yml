@@ -34,14 +34,15 @@ jobs:
       - name: List codeReviewLog directory contents
         run: ls -la codeReviewLog
 
-      # 检查生成的 Markdown 文件是否存在
+      # 检查生成的 Markdown 文件是否存在，使用 find 代替通配符
       - name: Check if Markdown file exists
         run: |
-          if [ -f "codeReviewLog/codeReviewResult_*.md" ]; then
-            echo "Markdown file found."
-          else
+          file=$(find codeReviewLog -name 'codeReviewResult_*.md')
+          if [ -z "$file" ]; then
             echo "Markdown file not found!"
             exit 1
+          else
+            echo "Markdown file found: $file"
           fi
 
       # 将生成的 Markdown 文件保存为工作流的输出
